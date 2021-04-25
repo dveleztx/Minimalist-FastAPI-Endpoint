@@ -6,7 +6,7 @@
 # Description : First FastAPI Implementation
 ###############################################################################
 
-# Import
+# Imports
 import fastapi
 import uvicorn
 from typing import Optional
@@ -30,6 +30,13 @@ def print_header():
 def calculate(x: int, y: int, z: Optional[int] = None):
     # x and y are required, but z is not, but it is an option
     result = x + y
+
+    # WARNING: Passing a zero will cause an issue! So use FastAPI Response handler!
+    if z == 0:
+        return fastapi.Response(content='{ "error": "ERROR: Z cannot be zero."}',
+                                media_type="application/json",
+                                status_code=400)
+
     if z is not None:
         result /= z
 
