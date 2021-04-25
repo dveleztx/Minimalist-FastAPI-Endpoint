@@ -26,21 +26,42 @@ def print_header():
     print()
 
 
+@api.get('/')
+def index():
+    body = "<html>" \
+           "<body style='padding: 10px;'>" \
+           "<h1>Welcome to the API</h1>" \
+           "<div>" \
+           "Try it: <a href='/api/calculate?x=7&y=11'>/api/calculate?x=7&y=11</a>" \
+           "</div>" \
+           "</body>" \
+           "</html>"
+
+    return fastapi.responses.HTMLResponse(content=body)
+
+
 @api.get('/api/calculate')
 def calculate(x: int, y: int, z: Optional[int] = None):
     # x and y are required, but z is not, but it is an option
     result = x + y
 
     # WARNING: Passing a zero will cause an issue! So use FastAPI Response handler!
-    if z == 0:
-        return fastapi.Response(content='{ "error": "ERROR: Z cannot be zero."}',
-                                media_type="application/json",
-                                status_code=400)
+    if z is not None and z == 0:
+        # return fastapi.Response(content='{ "error": "ERROR: Z cannot be zero."}',
+        #                         media_type="application/json",
+        #                         status_code=400)
+
+        # FastAPI alternative and better way of handling JSON responses rather than the above way
+        return fastapi.responses.JSONResponse(content={"error": "ERROR: Z cannot be zero."},
+                                              status_code=400)
 
     if z is not None:
         result /= z
 
     return {
+        'x': x,
+        'y': y,
+        'z': z,
         'value': result
     }
 
