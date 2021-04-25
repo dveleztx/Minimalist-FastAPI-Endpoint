@@ -9,13 +9,13 @@
 # Import
 import fastapi
 import uvicorn
+from typing import Optional
 
 api = fastapi.FastAPI()
 
 
 def main():
     print_header()
-    calculate()
     uvicorn.run(api, port=8000, host='127.0.0.1')
 
 
@@ -27,11 +27,14 @@ def print_header():
 
 
 @api.get('/api/calculate')
-def calculate():
-    value = 2 + 2
+def calculate(x: int, y: int, z: Optional[int] = None):
+    # x and y are required, but z is not, but it is an option
+    result = x + y
+    if z is not None:
+        result /= z
 
     return {
-        'value': value
+        'value': result
     }
 
 
